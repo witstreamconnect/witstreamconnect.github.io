@@ -24,9 +24,17 @@ CONTAINER_NAME="witstream-connect"
 CONFIG_FILE="witstream-config.json"
 PORT="${WITSTREAM_PORT:-3000}"
 VERSION="${1:-latest}"
+LICENCE_SERVER_URL="${WITSTREAM_LICENCE_SERVER_URL:-https://licence.witstreamconnect.com}"
 
 info()  { printf '%s\n' "$1"; }
 error() { printf 'Error: %s\n' "$1" >&2; }
+
+# Tiny, dependency-free JSON field reader for the Licence Server's own
+# small, fixed response shapes — deliberately not requiring jq, since a
+# customer's machine having it installed is not a safe assumption.
+json_field() {
+  printf '%s' "$1" | sed -n "s/.*\"$2\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p"
+}
 
 info "WITStream Connect installer"
 info "----------------------------"
@@ -43,35 +51,46 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-# 2. Pull the image. Tried anonymously first, since whether this image
-#    needs sign-in depends on how it's published — no need to prompt a
-#    customer for credentials they may not need.
-info "Pulling ${IMAGE}:${VERSION}..."
-if ! docker pull "${IMAGE}:${VERSION}" 2>/tmp/witstream-pull-error.log; then
-  if grep -qi "denied\|unauthorized" /tmp/witstream-pull-error.log; then
-    info ""
-    info "This image needs sign-in. Use the GitHub username and access token from your WITStream Connect account."
-    read -r -p "GitHub username: " GH_USER
-    read -r -s -p "Access token: " GH_TOKEN
-    echo ""
-    echo "$GH_TOKEN" | docker login "$REGISTRY" -u "$GH_USER" --password-stdin
-    docker pull "${IMAGE}:${VERSION}"
-  else
-    error "Could not pull ${IMAGE}:${VERSION}. Details:"
-    cat /tmp/witstream-pull-error.log >&2
-    rm -f /tmp/witstream-pull-error.log
-    exit 1
-  fi
+# 2. The product image is private (see CLAUDE.md: kept that way
+#    deliberately to protect the real product logic, not left private by
+#    accident). The Licence Server itself brokers real pull access using
+#    the licence key as the credential, so nobody ever needs a separate
+#    GitHub account just to install this. Ask for the licence key once,
+#    up front, and reuse it below for the config file too.
+if [ -f "$CONFIG_FILE" ]; then
+  LICENCE_KEY=$(sed -n 's/.*"licenceKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$CONFIG_FILE" | head -1)
 fi
-rm -f /tmp/witstream-pull-error.log
+if [ -z "${LICENCE_KEY:-}" ]; then
+  read -r -p "Licence key (from your WITStream Connect account): " LICENCE_KEY
+fi
 
-# 3. First run only: create a starter config file and ask for the
-#    licence key. Never overwrites an existing config on a re-run, so
-#    real connections and settings survive every update.
+info "Requesting registry access..."
+IMAGE_ACCESS_RESPONSE=$(curl -sS -X POST "${LICENCE_SERVER_URL}/image-access" \
+  -H "Content-Type: application/json" \
+  -d "{\"licenceKey\":\"${LICENCE_KEY}\"}") || {
+  error "Could not reach the Licence Server at ${LICENCE_SERVER_URL}. Check your connection and try again."
+  exit 1
+}
+
+REGISTRY_USER=$(json_field "$IMAGE_ACCESS_RESPONSE" "username")
+REGISTRY_TOKEN=$(json_field "$IMAGE_ACCESS_RESPONSE" "token")
+
+if [ -z "$REGISTRY_TOKEN" ]; then
+  error "That licence key wasn't accepted — check it's correct, active, and not expired."
+  exit 1
+fi
+
+echo "$REGISTRY_TOKEN" | docker login "$REGISTRY" -u "$REGISTRY_USER" --password-stdin
+
+info "Pulling ${IMAGE}:${VERSION}..."
+docker pull "${IMAGE}:${VERSION}"
+
+# 3. First run only: create a starter config file. Never overwrites an
+#    existing one on a re-run, so real connections and settings survive
+#    every update.
 if [ ! -f "$CONFIG_FILE" ]; then
   info ""
   info "No ${CONFIG_FILE} found in this folder — setting one up now."
-  read -r -p "Licence key (from your WITStream Connect account): " LICENCE_KEY
   API_KEY=$(env LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom 2>/dev/null | head -c 32 || true)
   if [ -z "$API_KEY" ]; then API_KEY="changeme-please-set-a-real-key"; fi
 
@@ -80,7 +99,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
   "apiKey": "${API_KEY}",
   "licence": {
     "licenceKey": "${LICENCE_KEY}",
-    "licenceServerUrl": "https://licence.witstreamconnect.com"
+    "licenceServerUrl": "${LICENCE_SERVER_URL}"
   },
   "connections": []
 }
