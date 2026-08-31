@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WITStream Connect — Universal Drilling Data Hub</title>
+<meta name="description" content="Self-hosted, universal drilling data hub. WITSML, WITS0, ETP, OPC-UA, Modbus, and LAS, proven bidirectionally, source and sink both.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F1214; --panel: #181C20; --panel-2: #1F252B; --border: #2A3037;
+    --teal: #3FBFB0; --amber: #F2A93B; --text: #E8E6E0; --text-muted: #8B9399;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --display: 'Space Grotesk', 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); }
+  a { color: var(--teal); text-decoration: none; } a:hover { color: #56D6C6; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--teal); }
+  .tick { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-muted); }
+  .row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 0; align-items: center; }
+  .cell { padding: 18px 20px; font-size: 13px; }
+  .cell.label { color: var(--text); font-weight: 500; }
+  .cell.us { color: var(--text); background: rgba(63,191,176,0.06); border-left: 1px solid rgba(63,191,176,0.25); border-right: 1px solid rgba(63,191,176,0.25); }
+  .cell.them { color: var(--text-muted); }
+
+  .navlink { cursor: pointer; padding: 4px 0; border-bottom: 2px solid transparent; transition: color .15s; }
+  .navlink:hover { color: var(--text); }
+  .navlink.active { color: var(--text); border-bottom-color: var(--teal); }
+  .cta { cursor: pointer; }
+  .page { display: none; }
+  .page.visible { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div style="width: 100%; background: var(--bg);">
+
+  <!-- ============ NAV (shared across every page) ============ -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 22px 48px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 10;">
+    <div class="navlink" data-goto="landing" style="display: flex; align-items: center; gap: 14px; border-bottom: none;">
+      <svg width="118" height="28" viewBox="0 0 300 88" fill="none" style="height: 20px; width: auto;">
+        <path d="M0 44 H27" stroke="#3FBFB0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M27 44 L38 19 L49 68" stroke="#F2A93B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M49 68 L60 30 L71 54 L82 44 H109" stroke="#3FBFB0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div style="font-family: var(--display); font-weight: 600; font-size: 16px;">WITStream Connect</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 32px; font-size: 13px; color: var(--text-muted);">
+      <div class="navlink" data-goto="whyus">Why us</div>
+      <div class="navlink" data-goto="pricing">Pricing</div>
+      <div class="navlink" style="cursor: default; opacity: .5;">Docs</div>
+      <div class="cta" style="background: var(--teal); color: #0F1214; font-family: var(--sans); font-weight: 600; font-size: 13px; padding: 9px 20px; border-radius: 8px;">Request a demo</div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: LANDING                                                 -->
+  <!-- ============================================================ -->
+  <section class="page" id="page-landing">
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 56px; padding: 88px 48px; max-width: 1360px; margin: 0 auto;">
+      <div style="display: flex; flex-direction: column; gap: 22px;">
+        <div class="eyebrow">Universal drilling data hub</div>
+        <div style="font-family: var(--display); font-size: 48px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;">Any format in.<br>Any format out.</div>
+        <div style="font-size: 16px; color: var(--text-muted); max-width: 440px; line-height: 1.65;">
+          WITSML, WITS0, ETP, OPC-UA, Modbus, LAS — proven bidirectionally, source and sink both. Reconfigure for a new rig, a new contractor's numbering scheme, a new unit set — through the UI, no developer, no code.
+        </div>
+        <div style="display: flex; gap: 14px; margin-top: 6px;">
+          <div class="cta" style="background: var(--teal); color: #0F1214; font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px 26px; border-radius: 8px;">Request a demo</div>
+          <div class="navlink" data-goto="whyus" style="border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-weight: 500; font-size: 14px; padding: 12px 26px; border-radius: 8px;">See how it works</div>
+        </div>
+      </div>
+      <div style="border-radius: 16px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6); background: var(--panel); aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#2A3037" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l4-4 4 4 6-6 4 4"/></svg>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 20px 48px;">
+      <div style="max-width: 1360px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div class="eyebrow" style="color: var(--text-muted);">Proven, not theoretical</div>
+        <div style="display: flex; gap: 40px; font-family: var(--mono); font-size: 13px; color: var(--text-muted);">
+          <div>100+ rigs, one deployment, no starvation</div>
+          <div>WITSML validated against a real independent server</div>
+          <div>Reconfigured for a new rig with zero code changes</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 56px; padding: 96px 48px; max-width: 1360px; margin: 0 auto;">
+      <div style="border-radius: 16px; overflow: hidden; border: 1px solid var(--border); order: 2; background: var(--panel); aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#2A3037" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 18px; order: 1;">
+        <div class="eyebrow">Built for the rig floor and the RTOC</div>
+        <div style="font-family: var(--display); font-size: 32px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25;">Every reading, at a glance</div>
+        <div style="font-size: 15px; color: var(--text-muted); max-width: 420px; line-height: 1.65;">
+          WOB, RPM, torque, standpipe pressure, ROP against real depth — the same instrument-panel conventions a driller already trusts, not a spreadsheet dressed up as a dashboard.
+        </div>
+      </div>
+    </div>
+
+    <div style="position: relative; padding: 120px 48px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(160deg, #14181b, #0B0E10);">
+      <div style="position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 22px;">
+        <div style="font-family: var(--display); font-size: 36px; font-weight: 700; max-width: 560px; letter-spacing: -0.01em;">Reconfigure for the next rig before you've finished your coffee</div>
+        <div class="cta" style="background: var(--teal); color: #0F1214; font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px 28px; border-radius: 8px;">Request a demo</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: WHY US                                                  -->
+  <!-- ============================================================ -->
+  <section class="page" id="page-whyus">
+
+    <div style="max-width: 1100px; margin: 0 auto; padding: 88px 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      <div class="eyebrow">Why WITStream Connect</div>
+      <div style="font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -0.02em; max-width: 720px;">The industry competes on protocol breadth. We compete on how fast you're actually running.</div>
+      <div style="font-size: 15px; color: var(--text-muted); max-width: 580px; line-height: 1.65;">
+        Every serious platform in this space can talk WITSML. The real cost has always been what happens next — a different contractor, a different channel numbering, a different unit set — and whether that takes a settings screen or a change order.
+      </div>
+    </div>
+
+    <div style="max-width: 1000px; margin: 0 auto; padding: 40px 48px 24px;">
+      <div class="row" style="border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+        <div class="cell"></div>
+        <div class="cell us" style="text-align: center; font-family: var(--display); font-weight: 600; font-size: 14px; border-radius: 10px 10px 0 0; border-top: 1px solid rgba(63,191,176,0.25);">WITStream Connect</div>
+        <div class="cell them" style="text-align: center; font-family: var(--display); font-weight: 600; font-size: 14px;">Typical enterprise platform</div>
+      </div>
+      <div class="row"><div class="cell label">Reconfiguring for a new rig or contractor</div><div class="cell us">A settings screen, no code, proven in testing</div><div class="cell them">Usually a services engagement</div></div>
+      <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Where your data lives</div><div class="cell us">Your own infrastructure, self-hosted</div><div class="cell them">Usually the vendor's cloud</div></div>
+      <div class="row"><div class="cell label">Getting started</div><div class="cell us">A container, one config file</div><div class="cell them">Usually a sales cycle and an integration project</div></div>
+      <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Format symmetry</div><div class="cell us">Any format in, any format out — genuinely, both directions</div><div class="cell them">Often one-way conversion</div></div>
+      <div class="row"><div class="cell label">Mnemonic mapping across vendors</div><div class="cell us">Solved once, centrally, across every protocol</div><div class="cell them">Handled per integration</div></div>
+      <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Scale proven</div><div class="cell us">100 simultaneous rigs, no cross-contamination — no hard-coded ceiling above that</div><div class="cell them">Varies</div></div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-top: 18px; line-height: 1.6;">"Typical enterprise platform" describes general patterns common across this category, not any specific competitor's product or claims.</div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding: 80px 48px;">
+      <div style="max-width: 1000px; margin: 0 auto;">
+        <div class="eyebrow" style="text-align: center; display: block;">Proven, not promised</div>
+        <div style="font-family: var(--display); font-size: 28px; font-weight: 600; text-align: center; margin-top: 12px; margin-bottom: 44px;">Every claim on this page has a real test behind it</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+          <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 26px 24px;">
+            <div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">6</div>
+            <div style="font-size: 13px; font-weight: 600; margin-top: 8px;">Protocols, both directions</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.6;">WITSML, WITS0, ETP, OPC-UA, Modbus, LAS — every one proven as both a source and a sink, not a fixed one-way converter.</div>
+          </div>
+          <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 26px 24px;">
+            <div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">100</div>
+            <div style="font-size: 13px; font-weight: 600; margin-top: 8px;">Simultaneous rigs, one deployment</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.6;">No starvation, no cross-contamination between connections — tested at real scale, not a lab demo with two rigs.</div>
+          </div>
+          <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 26px 24px;">
+            <div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">0</div>
+            <div style="font-size: 13px; font-weight: 600; margin-top: 8px;">Code changes to switch rig setups</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.6;">A completely different WITS0 channel scheme and unit set, reconfigured through the UI alone — genuinely proven, not aspirational.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: PRICING                                                 -->
+  <!-- ============================================================ -->
+  <section class="page" id="page-pricing">
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 80px 48px 12px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      <div class="eyebrow">Pricing</div>
+      <div style="font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -0.02em;">Priced by rigs connected, not by how much you configure</div>
+      <div style="font-size: 15px; color: var(--text-muted); max-width: 560px; line-height: 1.65;">Reconfiguring for a new rig, a new contractor, a new unit set costs nothing extra — it's a settings screen, not a change order. One deployment, self-hosted on your own infrastructure.</div>
+    </div>
+
+    <div style="max-width: 1240px; margin: 0 auto; padding: 48px 48px 96px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;">
+
+      <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 30px 26px; display: flex; flex-direction: column; gap: 20px;">
+        <div><div style="font-family: var(--display); font-weight: 600; font-size: 18px;">Starter</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">First deployment, one field</div></div>
+        <div><div style="font-family: var(--mono); font-size: 13px; color: var(--amber);">Up to 3 rigs</div></div>
+        <div style="height: 1px; background: var(--border);"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="tick"><span style="color: var(--teal);">✓</span> Every protocol — WITSML, WITS0, ETP, OPC-UA, Modbus, LAS</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Unlimited reconfiguration, no extra cost</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Self-hosted, your infrastructure</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Shared API key access</div>
+        </div>
+        <div class="cta" style="margin-top: auto; border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-weight: 500; font-size: 13px; padding: 11px; border-radius: 8px; text-align: center;">Get started</div>
+      </div>
+
+      <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 30px 26px; display: flex; flex-direction: column; gap: 20px;">
+        <div><div style="font-family: var(--display); font-weight: 600; font-size: 18px;">Growth</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">A handful of active pads</div></div>
+        <div><div style="font-family: var(--mono); font-size: 13px; color: var(--amber);">Up to 10 rigs</div></div>
+        <div style="height: 1px; background: var(--border);"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="tick"><span style="color: var(--teal);">✓</span> Everything in Starter</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Single sign-on (your own identity provider)</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Role-based access control</div>
+        </div>
+        <div class="cta" style="margin-top: auto; border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-weight: 500; font-size: 13px; padding: 11px; border-radius: 8px; text-align: center;">Get started</div>
+      </div>
+
+      <div style="background: var(--panel); border: 1.5px solid var(--teal); border-radius: 14px; padding: 30px 26px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 0 0 3px rgba(63,191,176,0.08);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-family: var(--display); font-weight: 600; font-size: 18px;">Fleet</div>
+          <div style="font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); border: 1px solid rgba(63,191,176,0.3); background: rgba(63,191,176,0.12); padding: 3px 8px; border-radius: 4px;">Most common</div>
+        </div>
+        <div><div style="font-family: var(--mono); font-size: 13px; color: var(--amber);">Up to 30 rigs</div></div>
+        <div style="height: 1px; background: var(--border);"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="tick"><span style="color: var(--teal);">✓</span> Everything in Growth</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Proven past 100 simultaneous rigs, no cross-contamination</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Priority support</div>
+        </div>
+        <div class="cta" style="margin-top: auto; background: var(--teal); color: #0F1214; font-family: var(--sans); font-weight: 600; font-size: 13px; padding: 11px; border-radius: 8px; text-align: center;">Get started</div>
+      </div>
+
+      <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 30px 26px; display: flex; flex-direction: column; gap: 20px;">
+        <div><div style="font-family: var(--display); font-weight: 600; font-size: 18px;">Enterprise</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Multi-region operators</div></div>
+        <div><div style="font-family: var(--mono); font-size: 13px; color: var(--amber);">Unlimited rigs</div></div>
+        <div style="height: 1px; background: var(--border);"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="tick"><span style="color: var(--teal);">✓</span> Everything in Fleet</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Dedicated onboarding</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Custom contract terms</div>
+          <div class="tick"><span style="color: var(--teal);">✓</span> Capacity sized to your deployment, no software cap</div>
+        </div>
+        <div class="cta" style="margin-top: auto; border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-weight: 500; font-size: 13px; padding: 11px; border-radius: 8px; text-align: center;">Talk to us</div>
+      </div>
+
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding: 72px 48px;">
+      <div style="max-width: 1000px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div class="eyebrow">Why the price doesn't move when your setup does</div>
+        <div style="font-family: var(--display); font-size: 28px; font-weight: 600; max-width: 640px;">Every plan reconfigures the same way — through a screen, not a support ticket</div>
+        <div style="font-size: 14px; color: var(--text-muted); max-width: 620px; line-height: 1.7;">A different rig contractor's channel numbering, a different unit set, a new mnemonic convention — none of it needs a developer or a change order, at any tier. That's genuinely proven, not a sales line: reconfigured for a full protocol switch with zero code changes, in testing.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ FOOTER (shared) ============ -->
+  <div style="border-top: 1px solid var(--border); padding: 48px 48px 32px;">
+    <div style="max-width: 1360px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 32px;">
+      <div style="display: flex; flex-direction: column; gap: 10px; max-width: 280px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <svg width="90" height="22" viewBox="0 0 300 88" fill="none" style="height: 16px; width: auto;">
+            <path d="M0 44 H27" stroke="#3FBFB0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M27 44 L38 19 L49 68" stroke="#F2A93B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M49 68 L60 30 L71 54 L82 44 H109" stroke="#3FBFB0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div style="font-family: var(--display); font-weight: 600; font-size: 13px;">WITStream Connect</div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">Self-hosted, universal drilling data hub.</div>
+      </div>
+      <div style="display: flex; gap: 56px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Product</div>
+          <div class="navlink" data-goto="whyus" style="font-size: 12px; color: var(--text-muted);">Why us</div>
+          <div class="navlink" data-goto="pricing" style="font-size: 12px; color: var(--text-muted);">Pricing</div>
+          <div style="font-size: 12px; color: var(--text-muted); opacity: .5;">Docs</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Company</div>
+          <div style="font-size: 12px; color: var(--text-muted); opacity: .5;">About</div>
+          <div style="font-size: 12px; color: var(--text-muted); opacity: .5;">Contact sales</div>
+        </div>
+      </div>
+    </div>
+    <div style="max-width: 1360px; margin: 32px auto 0; padding-top: 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted);">© 2026 WITStream Connect.</div>
+  </div>
+
+</div>
+
+<script>
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(function (el) {
+      el.classList.toggle('visible', el.id === 'page-' + name);
+    });
+    document.querySelectorAll('.navlink[data-goto]').forEach(function (el) {
+      el.classList.toggle('active', el.dataset.goto === name);
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    try { history.replaceState(null, '', '#' + name); } catch (e) {}
+  }
+
+  document.querySelectorAll('[data-goto]').forEach(function (el) {
+    el.addEventListener('click', function () { showPage(el.dataset.goto); });
+  });
+
+  var initial = (location.hash || '#landing').slice(1);
+  if (!document.getElementById('page-' + initial)) initial = 'landing';
+  showPage(initial);
+</script>
+</body>
+</html>
