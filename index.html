@@ -272,6 +272,57 @@
   </section>
 
   <!-- ============================================================ -->
+  <!-- PAGE: ABOUT                                                   -->
+  <!-- ============================================================ -->
+  <section class="page" id="page-about">
+
+    <div style="max-width: 900px; margin: 0 auto; padding: 88px 48px 24px;">
+      <div class="eyebrow">About</div>
+      <div style="font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -0.02em; max-width: 720px; margin-top: 12px;">Built on a decade that already worked</div>
+      <div style="font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; margin-top: 18px;">
+        We are the architects and IP owners of XStream Connect, a Windows library for connecting to WITSML drilling data. It ran in live production for over a decade, across ten oil and gas companies, without a single minute of downtime or a moment of lost telemetry.
+      </div>
+      <div style="font-size: 15px; color: var(--text-muted); max-width: 640px; line-height: 1.7; margin-top: 16px;">
+        That isn't a claim we're hoping is true. It's the real, lived track record the whole company is built on. The one thing that library never had was independence: it was a compiled-in class other developers had to reference directly into their own applications, one format, one direction, whatever the original integration needed and nothing else. WITStream Connect is that same proven foundation, rebuilt as something that can stand on its own: standalone, self-hosted, and genuinely bidirectional across every format a drilling operation actually uses.
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 48px; margin-top: 32px;">
+      <div style="max-width: 900px; margin: 0 auto; display: flex; gap: 48px; flex-wrap: wrap;">
+        <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">10+</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">years in production</div></div>
+        <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">10</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">oil and gas companies running it</div></div>
+        <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">0</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">minutes of downtime</div></div>
+        <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">0</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">moments of lost telemetry</div></div>
+      </div>
+    </div>
+
+    <div style="max-width: 900px; margin: 0 auto; padding: 64px 48px;">
+      <div class="eyebrow">How we work</div>
+      <div style="font-family: var(--display); font-size: 26px; font-weight: 600; margin-top: 10px; max-width: 600px;">The same three principles run through everything we've built</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 28px;">
+        <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
+          <div style="font-family: var(--display); font-weight: 600; font-size: 15px;">Self-hosted, always</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.6;">Runs on your own infrastructure. Drilling data never reaches our servers, the only thing that ever leaves a deployment is licensing metadata.</div>
+        </div>
+        <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
+          <div style="font-family: var(--display); font-weight: 600; font-size: 15px;">Genuinely bidirectional</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.6;">Every one of six protocols proven as both source and sink. Most platforms in this space pick one format and convert one way.</div>
+        </div>
+        <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
+          <div style="font-family: var(--display); font-weight: 600; font-size: 15px;">Proven at scale</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.6;">100 simultaneous rigs, no starvation, no cross-contamination, no hard-coded ceiling anywhere in the code, tested, not assumed.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding: 72px 48px; text-align: center;">
+      <div style="font-family: var(--display); font-size: 24px; font-weight: 600;">Want to see it running on a real rig setup?</div>
+      <div class="navlink cta" data-goto="demo" style="display: inline-block; margin-top: 20px; background: var(--teal); color: #0F1214; font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px 28px; border-radius: 8px; border-bottom: none;">Request a demo</div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================ -->
   <!-- PAGE: REQUEST A DEMO                                          -->
   <!-- ============================================================ -->
   <section class="page" id="page-demo">
@@ -329,7 +380,7 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Company</div>
-          <div style="font-size: 12px; color: var(--text-muted); opacity: .5;">About</div>
+          <div class="navlink" data-goto="about" style="font-size: 12px; color: var(--text-muted);">About</div>
           <a href="mailto:sales@witstreamconnect.com" style="font-size: 12px; color: var(--text-muted);">Contact sales</a>
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
