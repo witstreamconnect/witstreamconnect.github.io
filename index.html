@@ -48,7 +48,7 @@
     <div style="display: flex; align-items: center; gap: 32px; font-size: 13px; color: var(--text-muted);">
       <div class="navlink" data-goto="whyus">Why us</div>
       <div class="navlink" data-goto="pricing">Pricing</div>
-      <div class="navlink" style="cursor: default; opacity: .5;">Docs</div>
+      <div class="navlink" data-goto="docs">Docs</div>
       <div class="navlink cta" data-goto="demo" style="background: var(--teal); color: #0F1214; font-family: var(--sans); font-weight: 600; font-size: 13px; padding: 9px 20px; border-radius: 8px; border-bottom: none;">Request a demo</div>
     </div>
   </div>
@@ -400,6 +400,85 @@
 
   </section>
 
+  <!-- ============================================================ -->
+  <!-- PAGE: DOCS                                                    -->
+  <!-- ============================================================ -->
+  <section class="page" id="page-docs">
+
+    <div style="max-width: 900px; margin: 0 auto; padding: 88px 48px 24px;">
+      <div class="eyebrow">Docs</div>
+      <div style="font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -0.02em; max-width: 700px; margin-top: 12px;">From licence key to live data, in three steps</div>
+      <div style="font-size: 15px; color: var(--text-muted); max-width: 620px; line-height: 1.7; margin-top: 16px;">
+        Everything here reflects the real product, not a simplified version of it. If something here doesn't match what you're seeing, that's worth a message to support, not something to work around yourself.
+      </div>
+    </div>
+
+    <div style="max-width: 900px; margin: 0 auto; padding: 24px 48px 0;">
+      <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px;">
+        <div style="display: flex; gap: 24px; align-items: baseline;">
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--teal);">01</div>
+          <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Get a licence and deploy the container</div>
+        </div>
+        <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-left: 40px;">
+          Sign up through the customer portal, pick a tier, and a real licence key is issued straight away. Deploying is one line, run on your own infrastructure, on-premise or your own cloud account, nothing is hosted for you:
+        </div>
+        <div style="margin-left: 40px; margin-top: 6px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: var(--mono); font-size: 12.5px; overflow-x: auto;">curl -fsSL https://witstreamconnect.com/install.sh | bash</div>
+        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7; padding-left: 40px; margin-top: 8px;">
+          The install script asks for your licence key once, generates a random API key for your own dashboard, and never touches an existing configuration on a later run, so re-running it is also the correct way to pick up an update.
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px;">
+        <div style="display: flex; gap: 24px; align-items: baseline;">
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--teal);">02</div>
+          <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Map your first connection</div>
+        </div>
+        <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-left: 40px;">
+          Open the configuration screen (linked from your own dashboard), add a connection, and pick a source: WITSML, WITS0, ETP, OPC-UA, Modbus, or a LAS file folder. Each source type reveals only the fields it actually needs. If your rig's own mnemonics don't match the standard set, the mnemonic map translates them, this is the same settings screen that reconfigures for a completely different contractor's channel numbering with no code changes.
+        </div>
+        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7; padding-left: 40px; margin-top: 8px;">
+          Optional output sinks (CSV, or re-emitting in any of the other five formats) toggle on the same screen. A saved change takes effect on the next restart, the install command above is also the redeploy command.
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 48px;">
+        <div style="display: flex; gap: 24px; align-items: baseline;">
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--teal);">03</div>
+          <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Watch it run</div>
+        </div>
+        <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-left: 40px;">
+          The live dashboard shows every connection's real state. <span style="color: var(--teal);">Transferring</span> means data is genuinely flowing; <span style="color: var(--amber);">reconnecting</span> means a connection dropped and is retrying on its own, no action needed; a plain <span style="color: var(--red);">suspended</span> badge with a message means it needs a look, usually a real, readable reason (an unreachable address, a rejected credential) rather than a generic failure.
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding: 56px 48px;">
+      <div style="max-width: 900px; margin: 0 auto;">
+        <div class="eyebrow">Common questions</div>
+        <div style="display: flex; flex-direction: column; gap: 24px; margin-top: 20px;">
+          <div>
+            <div style="font-weight: 600; font-size: 14px;">A connection shows "suspended", what do I do?</div>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.6;">Read the status message next to it first, it's a real, specific reason, not a generic error. Most causes are an address or credential issue on the source system itself, not something wrong with the deployment. It will keep retrying on its own; nothing else stops running while it does.</div>
+          </div>
+          <div>
+            <div style="font-weight: 600; font-size: 14px;">Can I change tiers later?</div>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.6;">Yes, from your account overview in the customer portal. Nothing about your configuration needs to change, tiers only govern how many rigs can connect at once.</div>
+          </div>
+          <div>
+            <div style="font-weight: 600; font-size: 14px;">Does reconfiguring for a new rig need a developer?</div>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.6;">No. A different contractor's channel numbering, a different unit set, a different protocol entirely, all of it is the same settings screen described in step two above, proven in testing with zero code changes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding: 56px 48px; text-align: center;">
+      <div style="font-family: var(--display); font-size: 22px; font-weight: 600;">Something not covered here?</div>
+      <div class="navlink" data-goto="contact" style="display: inline-block; margin-top: 16px; border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-weight: 500; font-size: 14px; padding: 12px 26px; border-radius: 8px;">Contact sales</div>
+    </div>
+
+  </section>
+
   <!-- ============ FOOTER (shared) ============ -->
   <div style="border-top: 1px solid var(--border); padding: 48px 48px 32px;">
     <div style="max-width: 1360px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 32px;">
@@ -414,7 +493,7 @@
           <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Product</div>
           <div class="navlink" data-goto="whyus" style="font-size: 12px; color: var(--text-muted);">Why us</div>
           <div class="navlink" data-goto="pricing" style="font-size: 12px; color: var(--text-muted);">Pricing</div>
-          <div style="font-size: 12px; color: var(--text-muted); opacity: .5;">Docs</div>
+          <div class="navlink" data-goto="docs" style="font-size: 12px; color: var(--text-muted);">Docs</div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Company</div>
