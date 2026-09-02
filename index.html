@@ -356,8 +356,46 @@
         <button type="submit" style="margin-top: 8px; background: var(--teal); color: #0F1214; border: none; font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px; border-radius: 8px; cursor: pointer;">Request a demo</button>
       </form>
       <div id="demo-sent" style="display: none; text-align: center; padding: 32px 0; font-size: 14px; color: var(--text-muted); line-height: 1.7;">
-        Thanks, that's opened an email to our team with your details. We verify every request before scheduling a call, so expect a reply from a real person, not an automated link.
+        Thanks, that's on its way to us. We verify every request before scheduling a call, so expect a reply from a real person, not an automated link.
       </div>
+      <div id="demo-error" style="display: none; text-align: center; padding: 16px 0; font-size: 13px; color: var(--red);"></div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- PAGE: CONTACT SALES                                           -->
+  <!-- ============================================================ -->
+  <section class="page" id="page-contact">
+
+    <div style="max-width: 640px; margin: 0 auto; padding: 88px 48px 96px;">
+      <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 40px;">
+        <div class="eyebrow">Contact sales</div>
+        <div style="font-family: var(--display); font-size: 34px; font-weight: 700; letter-spacing: -0.02em;">Talk to us about your deployment</div>
+        <div style="font-size: 14.5px; color: var(--text-muted); max-width: 460px; line-height: 1.65;">
+          Pricing, fleet sizing, anything short of a full demo. Tell us what you need and a real person gets back to you.
+        </div>
+      </div>
+
+      <form id="contact-form" style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="contact-name" style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Name</label>
+          <input id="contact-name" required style="background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; color: var(--text); font-family: var(--sans); font-size: 14px;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="contact-email" style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Work email</label>
+          <input id="contact-email" type="email" required style="background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; color: var(--text); font-family: var(--sans); font-size: 14px;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="contact-message" style="font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Message</label>
+          <textarea id="contact-message" rows="4" required style="background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; color: var(--text); font-family: var(--sans); font-size: 14px; resize: vertical;"></textarea>
+        </div>
+        <button type="submit" style="margin-top: 8px; background: var(--teal); color: #0F1214; border: none; font-family: var(--sans); font-weight: 600; font-size: 14px; padding: 13px; border-radius: 8px; cursor: pointer;">Send</button>
+      </form>
+      <div id="contact-sent" style="display: none; text-align: center; padding: 32px 0; font-size: 14px; color: var(--text-muted); line-height: 1.7;">
+        Thanks, that's on its way to us. We'll reply from a real person, usually within a business day.
+      </div>
+      <div id="contact-error" style="display: none; text-align: center; padding: 16px 0; font-size: 13px; color: var(--red);"></div>
     </div>
 
   </section>
@@ -381,11 +419,11 @@
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Company</div>
           <div class="navlink" data-goto="about" style="font-size: 12px; color: var(--text-muted);">About</div>
-          <a href="mailto:sales@witstreamconnect.com" style="font-size: 12px; color: var(--text-muted);">Contact sales</a>
+          <div class="navlink" data-goto="contact" style="font-size: 12px; color: var(--text-muted);">Contact sales</div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <div style="font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;">Account</div>
-          <div style="font-size: 12px; color: var(--text-muted); opacity: .5;">Customer Portal</div>
+          <a href="https://witstreamconnect-customer-portal.fly.dev/" style="font-size: 12px; color: var(--text-muted);">Customer Portal</a>
         </div>
       </div>
     </div>
@@ -410,22 +448,51 @@
     el.addEventListener('click', function () { showPage(el.dataset.goto); });
   });
 
+  // The one real backend this static site talks to: the customer
+  // portal's own /api/leads endpoint, a genuine database write, not a
+  // mailto: link that only ever opens a draft in the visitor's own
+  // mail client and never actually sends anything on its own.
+  var PORTAL_API_BASE = 'https://witstreamconnect-customer-portal.fly.dev';
+
+  async function submitLead(type, fields, formEl, sentEl, errorEl) {
+    errorEl.style.display = 'none';
+    try {
+      var res = await fetch(PORTAL_API_BASE + '/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({ type: type }, fields)),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      formEl.style.display = 'none';
+      sentEl.style.display = 'block';
+    } catch (e) {
+      errorEl.textContent = 'Something went wrong sending this, please try again in a moment.';
+      errorEl.style.display = 'block';
+    }
+  }
+
   var demoForm = document.getElementById('demo-form');
   if (demoForm) {
     demoForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = document.getElementById('demo-name').value;
-      var email = document.getElementById('demo-email').value;
-      var company = document.getElementById('demo-company').value;
-      var role = document.getElementById('demo-role').value;
-      var subject = 'Demo request: ' + company;
-      var body = 'Name: ' + name + '\nWork email: ' + email + '\nCompany: ' + company + '\nRole: ' + role;
-      var mailto = 'mailto:sales@witstreamconnect.com'
-        + '?subject=' + encodeURIComponent(subject)
-        + '&body=' + encodeURIComponent(body);
-      window.location.href = mailto;
-      demoForm.style.display = 'none';
-      document.getElementById('demo-sent').style.display = 'block';
+      submitLead('demo', {
+        name: document.getElementById('demo-name').value,
+        email: document.getElementById('demo-email').value,
+        company: document.getElementById('demo-company').value,
+        role: document.getElementById('demo-role').value,
+      }, demoForm, document.getElementById('demo-sent'), document.getElementById('demo-error'));
+    });
+  }
+
+  var contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      submitLead('sales', {
+        name: document.getElementById('contact-name').value,
+        email: document.getElementById('contact-email').value,
+        message: document.getElementById('contact-message').value,
+      }, contactForm, document.getElementById('contact-sent'), document.getElementById('contact-error'));
     });
   }
 
