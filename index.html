@@ -541,10 +541,29 @@
     var mq = window.matchMedia('(max-width: 700px)');
     function apply() {
       var mobile = mq.matches;
-      document.querySelectorAll('[style]').forEach(function (el) {
+      // Three honest passes, not one combined snapshot-then-modify
+      // loop, and not even two. Pass one snapshots every element's
+      // real, original inline style. Pass two restores every element
+      // to that original style, completely, before anything is
+      // touched. Only then does pass three modify anything. Two
+      // passes still had a real bug: modifying a CHILD's style from
+      // its PARENT's own turn (min-width, below) got silently wiped
+      // out moments later when the loop reached that same child's own
+      // turn and restored it from its snapshot, since
+      // querySelectorAll returns parents before children in document
+      // order, and restore-then-modify were still one combined step
+      // per element. Separating "restore everything" from "modify
+      // anything" into its own complete pass is what actually fixes
+      // it, not another special case.
+      var all = document.querySelectorAll('[style]');
+      all.forEach(function (el) {
         if (el.dataset.origStyle === undefined) el.dataset.origStyle = el.getAttribute('style') || '';
+      });
+      all.forEach(function (el) {
         el.setAttribute('style', el.dataset.origStyle);
-        if (!mobile) return;
+      });
+      if (!mobile) return;
+      all.forEach(function (el) {
         var s = el.style;
         if (s.paddingLeft === '48px' && s.paddingRight === '48px') {
           s.paddingLeft = '20px';
@@ -561,18 +580,46 @@
             else if (fs >= 26) s.fontSize = Math.round(fs * 0.78) + 'px';
           }
         }
-        // The nav bar itself: logo, links, and the CTA button all sit
-        // in one row on desktop; on a phone width they need to wrap
-        // rather than clip off the edge of the screen.
-        if (s.justifyContent === 'space-between' && s.position === 'sticky') {
+        // A real gap in the first pass of this fix: it only forced
+        // flex-wrap on the two specific rows already found broken (the
+        // nav, by its own sticky+space-between fingerprint, and the
+        // nav links, by their own literal 32px gap), so any OTHER flex
+        // row with content wide enough to overflow a phone screen was
+        // still clipped, exactly what the "Proven, not theoretical"
+        // strip turned out to be, caught only because Phil looked at
+        // the real page on a real phone and it was still wrong. Every
+        // flex row on this page is a horizontal strip of short items,
+        // nothing here is a deliberately-fixed single-line layout that
+        // wrapping would break, so the real, general fix is every
+        // inline flex container gets flex-wrap: wrap on mobile, not
+        // just the ones a first pass happened to test.
+        // Only a ROW-direction flex container can overflow this way,
+        // items sitting side by side with nowhere to go; a COLUMN
+        // container's children are already stacked, wrap is meaningless
+        // for it, and forcing max-width: 100% onto a column child that
+        // already carries its own margin-left (the curl command's own
+        // code box, 40px indented to line up under its step heading)
+        // pushes its right edge past the viewport instead of fixing
+        // anything, a real regression this fix introduced and caught
+        // by testing again, not assumed fixed after the first pass.
+        if (s.display === 'flex' && s.flexDirection !== 'column' && !s.flexWrap) {
           s.flexWrap = 'wrap';
-          s.rowGap = '10px';
+          s.rowGap = s.rowGap || '10px';
+          // The other half of the same real gap: flex-wrap alone let
+          // one row (the "01 Get a licence and deploy the container"
+          // step heading on the Docs page) still overflow by 11px,
+          // because a flex item's default min-width is the width of
+          // its own unbroken content, not 0, the classic flexbox trap.
+          // Wrapping the ROW does nothing for that until every direct
+          // child is also told it is allowed to shrink and wrap its
+          // own text, min-width: 0 plus max-width: 100% is the
+          // standard, correct fix, not a guess.
+          Array.prototype.forEach.call(el.children, function (child) {
+            child.style.minWidth = '0';
+            child.style.maxWidth = '100%';
+          });
         }
-        if (s.gap === '32px') {
-          s.flexWrap = 'wrap';
-          s.rowGap = '10px';
-          s.gap = '18px';
-        }
+        if (s.gap === '32px') s.gap = '18px';
       });
     }
     mq.addEventListener('change', apply);
