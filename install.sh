@@ -9,7 +9,7 @@
 # Safe to re-run: this is also the exact command a customer-wide update
 # notice tells a deployment to run to redeploy onto a newer version
 # (see WITStreamConnect.Licensing's UpdateNotice / the Licence Server's
-# admin API) — running it again stops the old container, pulls the new
+# admin API) , running it again stops the old container, pulls the new
 # image, and starts it back up with the same config file untouched.
 #
 # Usage:
@@ -30,13 +30,13 @@ info()  { printf '%s\n' "$1"; }
 error() { printf 'Error: %s\n' "$1" >&2; }
 
 # Tiny, dependency-free JSON field reader for the Licence Server's own
-# small, fixed response shapes — deliberately not requiring jq, since a
+# small, fixed response shapes , deliberately not requiring jq, since a
 # customer's machine having it installed is not a safe assumption.
 json_field() {
   printf '%s' "$1" | sed -n "s/.*\"$2\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p"
 }
 
-info "WITStream Connect installer"
+info "WITStream Connect® installer"
 info "----------------------------"
 
 # 1. Docker must be installed and running. Both are real, common failure
@@ -61,7 +61,7 @@ if [ -f "$CONFIG_FILE" ]; then
   LICENCE_KEY=$(sed -n 's/.*"licenceKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$CONFIG_FILE" | head -1)
 fi
 if [ -z "${LICENCE_KEY:-}" ]; then
-  read -r -p "Licence key (from your WITStream Connect account): " LICENCE_KEY
+  read -r -p "Licence key (from your WITStream Connect® account): " LICENCE_KEY
 fi
 
 info "Requesting registry access..."
@@ -76,7 +76,7 @@ REGISTRY_USER=$(json_field "$IMAGE_ACCESS_RESPONSE" "username")
 REGISTRY_TOKEN=$(json_field "$IMAGE_ACCESS_RESPONSE" "token")
 
 if [ -z "$REGISTRY_TOKEN" ]; then
-  error "That licence key wasn't accepted — check it's correct, active, and not expired."
+  error "That licence key wasn't accepted , check it's correct, active, and not expired."
   exit 1
 fi
 
@@ -90,7 +90,7 @@ docker pull "${IMAGE}:${VERSION}"
 #    every update.
 if [ ! -f "$CONFIG_FILE" ]; then
   info ""
-  info "No ${CONFIG_FILE} found in this folder — setting one up now."
+  info "No ${CONFIG_FILE} found in this folder , setting one up now."
   API_KEY=$(env LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom 2>/dev/null | head -c 32 || true)
   if [ -z "$API_KEY" ]; then API_KEY="changeme-please-set-a-real-key"; fi
 
@@ -116,7 +116,7 @@ if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
   docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
 fi
 
-info "Starting WITStream Connect on port ${PORT}..."
+info "Starting WITStream Connect® on port ${PORT}..."
 docker run -d \
   --name "$CONTAINER_NAME" \
   --restart unless-stopped \
@@ -125,5 +125,5 @@ docker run -d \
   "${IMAGE}:${VERSION}"
 
 info ""
-info "WITStream Connect is running: http://localhost:${PORT}"
+info "WITStream Connect® is running: http://localhost:${PORT}"
 info "To update later, run this same script again (optionally with a version, e.g. ./install.sh v1.4.2)."
