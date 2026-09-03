@@ -34,6 +34,15 @@
   .page { display: none; }
   .page.visible { display: block; animation: fadeIn .25s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  html { overflow-x: hidden; }
+  body { overflow-x: hidden; }
+  img { max-width: 100%; }
+  @media (max-width: 700px) {
+    .row { grid-template-columns: 1fr; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .cell { padding: 4px 4px; }
+    .cell.us, .cell.them { border-left: none; border-right: none; border-radius: 0 !important; text-align: left !important; }
+    .row .cell:empty { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -515,6 +524,61 @@
 </div>
 
 <script>
+  // Real mobile fix, 3 September 2026: this page is built entirely
+  // with inline styles (the existing convention here, not something
+  // changed by this fix), which a plain external stylesheet cannot
+  // reliably override by attribute-substring matching without risking
+  // false positives (e.g. "48px" also appears in a hero font-size, a
+  // logo height, nothing to do with padding). Reading and setting each
+  // longhand property directly through the real CSSOM (el.style.paddingLeft,
+  // el.style.gridTemplateColumns, and so on) is precise, the browser
+  // has already parsed the shorthand for us, so this touches exactly
+  // the properties it means to and nothing else. Every element's
+  // original inline style is snapshotted once and always restored
+  // before re-applying, so resizing the window (or rotating a real
+  // device) never compounds a previous pass's changes.
+  (function () {
+    var mq = window.matchMedia('(max-width: 700px)');
+    function apply() {
+      var mobile = mq.matches;
+      document.querySelectorAll('[style]').forEach(function (el) {
+        if (el.dataset.origStyle === undefined) el.dataset.origStyle = el.getAttribute('style') || '';
+        el.setAttribute('style', el.dataset.origStyle);
+        if (!mobile) return;
+        var s = el.style;
+        if (s.paddingLeft === '48px' && s.paddingRight === '48px') {
+          s.paddingLeft = '20px';
+          s.paddingRight = '20px';
+        }
+        if (s.gridTemplateColumns === '1fr 1fr' || s.gridTemplateColumns === 'repeat(3, 1fr)' || s.gridTemplateColumns === 'repeat(4, 1fr)') {
+          s.gridTemplateColumns = '1fr';
+        }
+        if (s.gap === '56px') s.gap = '28px';
+        if (s.fontSize) {
+          var fs = parseInt(s.fontSize, 10);
+          if (!isNaN(fs)) {
+            if (fs >= 40) s.fontSize = Math.round(fs * 0.58) + 'px';
+            else if (fs >= 26) s.fontSize = Math.round(fs * 0.78) + 'px';
+          }
+        }
+        // The nav bar itself: logo, links, and the CTA button all sit
+        // in one row on desktop; on a phone width they need to wrap
+        // rather than clip off the edge of the screen.
+        if (s.justifyContent === 'space-between' && s.position === 'sticky') {
+          s.flexWrap = 'wrap';
+          s.rowGap = '10px';
+        }
+        if (s.gap === '32px') {
+          s.flexWrap = 'wrap';
+          s.rowGap = '10px';
+          s.gap = '18px';
+        }
+      });
+    }
+    mq.addEventListener('change', apply);
+    apply();
+  })();
+
   function showPage(name) {
     document.querySelectorAll('.page').forEach(function (el) {
       el.classList.toggle('visible', el.id === 'page-' + name);
