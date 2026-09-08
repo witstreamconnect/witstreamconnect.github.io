@@ -2,9 +2,8 @@
 # WITStream Connect installer.
 #
 # Handles login (only if the image needs it), pull, and run in one
-# sequence, matching the delivery mechanism decision in CLAUDE.md: "a
-# small installer script the customer runs once... not several
-# remembered manual commands."
+# sequence: a small installer script the customer runs once, not
+# several remembered manual commands.
 #
 # Safe to re-run: this is also the exact command a customer-wide update
 # notice tells a deployment to run to redeploy onto a newer version
@@ -51,9 +50,9 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-# 2. The product image is private (see CLAUDE.md: kept that way
-#    deliberately to protect the real product logic, not left private by
-#    accident). The Licence Server itself brokers real pull access using
+# 2. The product image is private, kept that way deliberately to protect
+#    the real product logic, not left private by accident. The Licence
+#    Server itself brokers real pull access using
 #    the licence key as the credential, so nobody ever needs a separate
 #    GitHub account just to install this. Ask for the licence key once,
 #    up front, and reuse it below for the config file too.
