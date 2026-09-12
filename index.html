@@ -384,23 +384,56 @@
   <!-- ============================================================ -->
   <section class="page" id="page-about">
 
-    <div style="max-width: 900px; margin: 0 auto; padding: 88px 48px 24px;">
-      <div class="eyebrow">About Us</div>
-      <div style="font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -0.02em; max-width: 720px; margin-top: 12px;">Built on more than 15 years that already worked</div>
-      <div style="font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; margin-top: 18px;">
-        We are the architects and IP owners of XStream Connect®, a Windows library for connecting to WITSML drilling data. It runs in live production today, across multiple global oil and gas drilling companies, and has done for more than 15 years, without a single minute of downtime or a moment of lost telemetry. That record includes a long-standing partnership with Lloyds Register, now known as Geoactive.
-      </div>
-      <div style="font-size: 15px; color: var(--text-muted); max-width: 640px; line-height: 1.7; margin-top: 16px;">
-        That isn't a claim we're hoping is true. It's the real, lived track record the whole company is built on. Two real things limited that library: it was a compiled-in class other developers had to reference directly into their own Windows applications, so any change needed a developer to rebuild and redeploy that whole application, and it only ever moved data one way, WITSML in, consumed by that application, nothing normalised and sent back out in another format. WITStream Connect® is that same proven foundation, rebuilt as something that can stand on its own: standalone, self-hosted, reconfigured live through its own settings screen with no developer and no rebuild, genuinely bidirectional across every format a drilling operation actually uses, and free of that original Windows dependency entirely, one container that runs on Linux, Windows, or macOS, wherever your infrastructure already lives.
+    <div style="position: relative; padding: 96px 48px 72px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      <img src="images/rig-dusk.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,18,20,0.95) 0%, rgba(15,18,20,0.82) 50%, rgba(15,18,20,0.95) 100%); z-index: 1;"></div>
+      <div style="position: relative; z-index: 2; max-width: 760px; width: 100%; margin: 0 auto; text-align: center;">
+        <div class="eyebrow" style="display: flex; justify-content: center;">About Us</div>
+        <div style="font-family: var(--display); font-size: 40px; font-weight: 700; letter-spacing: -0.02em; margin-top: 12px;">Built on more than 15 years that already worked</div>
+        <div style="font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 18px auto 0; line-height: 1.7;">
+          We own the IP behind XStream Connect®, a Windows library that has run live in production, across multiple global oil and gas drilling companies, for more than 15 years, without a single minute of downtime or a moment of lost telemetry, including a long-standing partnership with Lloyds Register, now Geoactive.
+        </div>
       </div>
     </div>
 
-    <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 48px; margin-top: 32px;">
-      <div style="max-width: 900px; margin: 0 auto; display: flex; gap: 48px; flex-wrap: wrap;">
+    <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 48px;">
+      <div style="max-width: 900px; margin: 0 auto; display: flex; gap: 48px; flex-wrap: wrap; justify-content: center; text-align: center;">
         <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">15+</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">years in production</div></div>
         <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">Global</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">oil and gas drilling companies running it</div></div>
         <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">0</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">minutes of downtime</div></div>
         <div><div style="font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--amber);">0</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">moments of lost telemetry</div></div>
+      </div>
+    </div>
+
+    <div style="max-width: 1040px; margin: 0 auto; padding: 72px 48px 24px;">
+      <div style="text-align: center;">
+        <div class="eyebrow" style="display: flex; justify-content: center;">Then and now</div>
+        <div style="font-family: var(--display); font-size: 26px; font-weight: 600; margin-top: 10px;">That track record isn't a claim we're hoping is true</div>
+        <div style="font-size: 14px; color: var(--text-muted); max-width: 560px; margin: 10px auto 0; line-height: 1.6;">It's the real, lived history the whole company is built on. Two real things limited it, and WITStream Connect® exists to fix exactly those two things.</div>
+      </div>
+
+      <div style="display: flex; align-items: stretch; gap: 0; margin-top: 36px; flex-wrap: wrap; justify-content: center;">
+        <div style="flex: 1; min-width: 280px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 28px;">
+          <div class="eyebrow">Origin</div>
+          <div style="font-family: var(--display); font-weight: 600; font-size: 20px; margin-top: 8px;">XStream Connect®</div>
+          <div style="height: 1px; background: var(--border); margin: 14px 0;"></div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 13.5px; color: var(--text-muted); display: flex; gap: 10px;"><span>&#10005;</span><span>Compiled directly into a customer's own application, any change needed a developer to rebuild and redeploy it</span></div>
+            <div style="font-size: 13.5px; color: var(--text-muted); display: flex; gap: 10px;"><span>&#10005;</span><span>Windows only</span></div>
+            <div style="font-size: 13.5px; color: var(--text-muted); display: flex; gap: 10px;"><span>&#10005;</span><span>One direction only: WITSML flowed in and was consumed, nothing was ever normalised and sent back out</span></div>
+          </div>
+        </div>
+        <div style="flex-basis: 70px; min-width: 70px; display: flex; align-items: center; justify-content: center; color: var(--teal); font-size: 22px;">&#8594;</div>
+        <div style="flex: 1; min-width: 280px; background: rgba(63,191,176,0.06); border: 1.5px solid var(--teal); border-radius: 12px; padding: 28px;">
+          <div class="eyebrow" style="color: var(--teal);">Evolution</div>
+          <div style="font-family: var(--display); font-weight: 600; font-size: 20px; margin-top: 8px;">WITStream Connect®</div>
+          <div style="height: 1px; background: var(--border); margin: 14px 0;"></div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="font-size: 13.5px; color: var(--teal); display: flex; gap: 10px;"><span>&#10003;</span><span>Standalone and self-hosted, reconfigured live through its own settings screen, no developer, no rebuild</span></div>
+            <div style="font-size: 13.5px; color: var(--teal); display: flex; gap: 10px;"><span>&#10003;</span><span>One container, runs on Linux, Windows, or macOS</span></div>
+            <div style="font-size: 13.5px; color: var(--teal); display: flex; gap: 10px;"><span>&#10003;</span><span>Genuinely bidirectional: any format in, any format out, across every protocol a drilling operation uses</span></div>
+          </div>
+        </div>
       </div>
     </div>
 
