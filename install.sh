@@ -115,14 +115,69 @@ if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
   docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
 fi
 
+# 5. A real, persistent data folder on the host, mounted at /app/data
+#    inside the container. A genuine, confirmed gap (18 September 2026,
+#    the full ecosystem audit): only the config file was ever mounted,
+#    so anything a customer configured to write inside the container
+#    (CSV or LAS output, an OPC-UA self-signed certificate) lived only
+#    in that one container's own writable layer and was silently lost
+#    on every redeploy, a fresh certificate and an empty output folder
+#    every update, never disclosed anywhere a customer would see it
+#    before now. The configuration screen's own defaults for these
+#    already point inside this same folder, so a customer who never
+#    touches those settings gets real persistence automatically; a
+#    customer who sets a custom path should keep it under here too.
+DATA_DIR="witstream-data"
+mkdir -p "$DATA_DIR"
+
 info "Starting WITStream Connect® on port ${PORT}..."
 docker run -d \
   --name "$CONTAINER_NAME" \
   --restart unless-stopped \
   -p "${PORT}:8080" \
   -v "$(pwd)/${CONFIG_FILE}:/app/witstream-config.json" \
+  -v "$(pwd)/${DATA_DIR}:/app/data" \
   "${IMAGE}:${VERSION}"
 
+# 6. A real health check, not just a declared "it's running" message.
+#    A genuine, confirmed gap (18 September 2026, the full ecosystem
+#    audit): this script previously reported success the moment
+#    `docker run` itself returned, which only means the container
+#    started, not that the application inside it came up cleanly, a
+#    bad or missing witstream-config.json, a port already in use
+#    inside the container, or any other startup failure would have
+#    left a customer looking at a "success" message and a dead
+#    service, with no clear next step. Two real checks now run before
+#    declaring success: the container itself must still be running
+#    (catches an immediate crash on startup) and the dashboard must
+#    actually answer over HTTP (catches the app failing to bind even
+#    though the container process is still alive), each retried for
+#    up to 30 real seconds, a genuinely generous window for a cold
+#    container start, before giving up and pointing at the real
+#    container logs rather than a guess.
+info "Waiting for it to come up..."
+HEALTHY=""
+for i in $(seq 1 30); do
+  if ! docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
+    break
+  fi
+  if curl -sS -o /dev/null -w '%{http_code}' "http://localhost:${PORT}" 2>/dev/null | grep -qE '^[23]'; then
+    HEALTHY="1"
+    break
+  fi
+  sleep 1
+done
+
 info ""
-info "WITStream Connect® is running: http://localhost:${PORT}"
-info "To update later, run this same script again (optionally with a version, e.g. ./install.sh v1.4.2)."
+if [ -n "$HEALTHY" ]; then
+  info "WITStream Connect® is running: http://localhost:${PORT}"
+  info "CSV/LAS output and any OPC-UA certificate are kept in ./${DATA_DIR}, on this machine, so they survive the next update too."
+  info "To update later, run this same script again (optionally with a version, e.g. ./install.sh v1.4.2)."
+else
+  if docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
+    error "The container is running, but the dashboard at http://localhost:${PORT} never answered. Check ${CONFIG_FILE} for a mistake, then look at the real startup logs: docker logs ${CONTAINER_NAME}"
+  else
+    error "The container stopped unexpectedly right after starting. Look at the real startup logs to see why: docker logs ${CONTAINER_NAME}"
+  fi
+  exit 1
+fi
