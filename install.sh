@@ -91,7 +91,11 @@ if [ ! -f "$CONFIG_FILE" ]; then
   info ""
   info "No ${CONFIG_FILE} found in this folder. Setting one up now."
   API_KEY=$(env LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom 2>/dev/null | head -c 32 || true)
-  if [ -z "$API_KEY" ]; then API_KEY="changeme-please-set-a-real-key"; fi
+  if [ -z "$API_KEY" ]; then API_KEY=$(od -An -tx1 -N24 /dev/urandom 2>/dev/null | tr -d ' \n' || true); fi
+  if [ -z "$API_KEY" ]; then
+    error "Couldn't generate a random API key on this machine. Please contact support."
+    exit 1
+  fi
 
   cat > "$CONFIG_FILE" <<EOF
 {
@@ -104,6 +108,10 @@ if [ ! -f "$CONFIG_FILE" ]; then
 }
 EOF
   info "Created ${CONFIG_FILE} with a generated API key. Add your rig connections through the configuration screen once it's running."
+  info ""
+  info "Your dashboard API key (the dashboard asks for it the first time you open it):"
+  info "  ${API_KEY}"
+  info "It is also saved as apiKey in ${CONFIG_FILE}."
 fi
 
 # 4. Idempotent (re)start: stop and remove any previous container of
