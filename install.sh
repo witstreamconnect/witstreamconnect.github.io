@@ -60,7 +60,13 @@ if [ -f "$CONFIG_FILE" ]; then
   LICENCE_KEY=$(sed -n 's/.*"licenceKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$CONFIG_FILE" | head -1)
 fi
 if [ -z "${LICENCE_KEY:-}" ]; then
-  read -r -p "Licence key (from your WITStream Connect® account): " LICENCE_KEY
+  # Hidden as it is typed or pasted, then confirmed by its last four
+  # characters so the customer still knows the paste worked. Read from
+  # the terminal itself: under "curl ... | bash" the script's own text
+  # arrives on standard input, and would be taken as the key.
+  read -r -s -p "Licence key (from your WITStream Connect® account, hidden as you paste it): " LICENCE_KEY </dev/tty
+  printf '\n'
+  info "Licence key received (ending ${LICENCE_KEY: -4})."
 fi
 
 info "Requesting registry access..."
@@ -194,9 +200,37 @@ if [ -z "$HEALTHY" ] && [ "$(docker info --format '{{.OperatingSystem}}' 2>/dev/
   PUBLISHED_PORT_ONLY="1"
 fi
 
+# The address other computers use to reach this one. A server usually
+# has no browser of its own, so "localhost" is no use to the person
+# reading this. Taken from the machine's own network settings (the
+# address it uses for outgoing traffic), with no outside lookup.
+server_address() {
+  ADDR=""
+  if command -v ip >/dev/null 2>&1; then
+    ADDR=$(ip route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p' | head -1)
+  fi
+  if [ -z "$ADDR" ] && command -v hostname >/dev/null 2>&1; then
+    ADDR=$(hostname -I 2>/dev/null | awk '{print $1}')
+  fi
+  if [ -z "$ADDR" ] && command -v ipconfig >/dev/null 2>&1; then
+    ADDR=$(ipconfig getifaddr en0 2>/dev/null || true)
+  fi
+  if [ -z "$ADDR" ]; then ADDR="<this server's address>"; fi
+  printf '%s' "$ADDR"
+}
+
 info ""
 if [ -n "$HEALTHY" ]; then
-  info "WITStream Connect® is running: http://localhost:${PORT}"
+  info "WITStream Connect® is running."
+  info ""
+  info "Open a web browser on any computer that can reach this server and go to:"
+  info ""
+  info "  http://$(server_address):${PORT}"
+  info ""
+  info "(On this machine itself, http://localhost:${PORT} also works.)"
+  info "The dashboard asks for your API key the first time you open it. It is saved as apiKey in ${CONFIG_FILE}."
+  info "If the page doesn't open from another computer, check that port ${PORT} is allowed through this server's firewall."
+  info ""
   info "CSV/LAS output and any OPC-UA certificate are kept in ./${DATA_DIR}, on this machine, so they survive the next update too."
   info "To update later, run this same script again (optionally with a version, e.g. ./install.sh v1.4.2)."
   if [ -n "$PUBLISHED_PORT_ONLY" ]; then
