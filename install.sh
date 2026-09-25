@@ -221,11 +221,14 @@ server_address() {
 
 info ""
 if [ -n "$HEALTHY" ]; then
-  info "WITStream Connect® is running."
+  # Bold green (and the address in bold) only when writing to a
+  # terminal, so a saved log has no stray colour codes in it.
+  if [ -t 1 ]; then GREEN_BOLD=$'\033[1;32m'; BOLD=$'\033[1m'; PLAIN=$'\033[0m'; else GREEN_BOLD=""; BOLD=""; PLAIN=""; fi
+  info "${GREEN_BOLD}✓ WITStream Connect® is running.${PLAIN}"
   info ""
   info "Open a web browser on any computer that can reach this server and go to:"
   info ""
-  info "  http://$(server_address):${PORT}"
+  info "  ${BOLD}http://$(server_address):${PORT}${PLAIN}"
   info ""
   info "(On this machine itself, http://localhost:${PORT} also works.)"
   info "The dashboard asks for your API key the first time you open it. It is saved as apiKey in ${CONFIG_FILE}."
