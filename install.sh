@@ -153,6 +153,8 @@ mkdir -p "$DATA_DIR"
 #    "Enable host networking" setting is on; if the dashboard doesn't
 #    answer in host mode there, the container is started again with
 #    just the dashboard port published, and the output ports explained.
+#    The container's own log is capped at five files of 20 MB, so it
+#    can never fill the disk however long the service runs.
 start_container() {
   if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
     docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -160,6 +162,7 @@ start_container() {
   docker run -d \
     --name "$CONTAINER_NAME" \
     --restart unless-stopped \
+    --log-opt max-size=20m --log-opt max-file=5 \
     "$@" \
     -e "ASPNETCORE_URLS=http://+:${PORT}" \
     -v "$(pwd)/${CONFIG_FILE}:/app/witstream-config.json" \
