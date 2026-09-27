@@ -656,11 +656,11 @@
           <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Get a licence and deploy the container</div>
         </div>
         <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-left: 40px;">
-          Sign up through the customer portal, pick a tier, and a licence key is issued straight away. Deploying is one line, run on your own infrastructure, on-premise or your own cloud account, nothing is hosted for you:
+          Sign up through the customer portal, pick a tier, and your licence key appears on your account page straight away. You need a Linux server with Docker (at least 2 processors and 4 GB of memory), on-premise or in your own cloud account; nothing is hosted for you. Then run this one line on it:
         </div>
         <div style="margin-left: 40px; margin-top: 6px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: var(--mono); font-size: 12.5px; overflow-x: auto;">curl -fsSL https://witstreamconnect.com/install.sh | bash</div>
         <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7; padding-left: 40px; margin-top: 8px;">
-          The install script asks for your licence key once, generates a random API key for your own dashboard, and never touches an existing configuration on a later run, so re-running it is also the correct way to pick up an update.
+          The installer asks for your licence key once, creates a dashboard API key and shows it to you (keep it; the dashboard asks for it the first time), then ends with numbered steps, including the address to open in a browser on any computer that can reach the server. Running the same line again later updates to the newest version and keeps your settings.
         </div>
       </div>
 
@@ -670,10 +670,10 @@
           <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Map your first connection</div>
         </div>
         <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-left: 40px;">
-          Open the configuration screen (linked from your own dashboard), add a connection, and pick a source: WITSML, WITS0, ETP, OPC-UA, Modbus, or a LAS file folder. Each source type reveals only the fields it actually needs. If your rig's own mnemonics don't match the standard set, the mnemonic map translates them, this is the same settings screen that reconfigures for a completely different contractor's channel numbering with no code changes.
+          Click Configuration at the top right of your dashboard, then + Add connection beside the Connections heading, and choose the Source type: WITSML, WITS0, ETP, OPC-UA, Modbus, or LAS file. Each source type reveals only the fields it actually needs. If your rig's own mnemonics don't match the standard set, the mnemonic map translates them, this is the same settings screen that reconfigures for a completely different contractor's channel numbering with no code changes.
         </div>
         <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7; padding-left: 40px; margin-top: 8px;">
-          Optional output sinks (CSV, or re-emitting in any of the other five formats) toggle on the same screen. A saved change takes effect on the next restart, the install command above is also the redeploy command.
+          Outputs (CSV, or any of the six formats) are tick boxes under Additional output sinks on the same screen; each network output is given a free port automatically. Click Save configuration at the bottom, then Apply now in the green message at the top, and the change is live within about half a minute.
         </div>
       </div>
 
@@ -698,7 +698,7 @@
           </div>
           <div>
             <div style="font-weight: 600; font-size: 14px;">Can I change tiers later?</div>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.6;">Yes, from your account overview in the customer portal. Nothing about your configuration needs to change, tiers only govern how many rigs can connect at once.</div>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.6;">Yes: click Manage subscription on your account page in the customer portal. Nothing about your configuration needs to change; tiers only govern how many rigs can connect at once, and your installation picks up the new tier within 15 minutes.</div>
           </div>
           <div>
             <div style="font-weight: 600; font-size: 14px;">Does reconfiguring for a new rig need a developer?</div>
