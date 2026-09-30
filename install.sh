@@ -113,11 +113,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
   "connections": []
 }
 EOF
-  info "Created ${CONFIG_FILE} with a generated API key. Add your rig connections through the configuration screen once it's running."
-  info ""
-  info "Your dashboard API key (the dashboard asks for it the first time you open it):"
-  info "  ${API_KEY}"
-  info "It is also saved as apiKey in ${CONFIG_FILE}."
+  info "Created ${CONFIG_FILE} with a generated dashboard API key (shown at the end). Add your rig connections through the configuration screen once it's running."
 fi
 
 # 4. Idempotent (re)start: stop and remove any previous container of
@@ -233,7 +229,16 @@ if [ -n "$HEALTHY" ]; then
   info ""
   info "     ${BOLD}http://$(server_address):${PORT}${PLAIN}"
   info ""
-  info "2. The dashboard asks for your API key the first time you open it. It is saved as apiKey in ${CONFIG_FILE}."
+  # The key is read back from the settings file after the service has
+  # started (it replaces an empty or placeholder key with a random one),
+  # and shown on every run in the same bold green as the running line, so
+  # it is easy to find (Philip, 30 September 2026).
+  DASHBOARD_KEY=$(sed -n 's/.*"apiKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$CONFIG_FILE" | head -1)
+  info "2. The dashboard asks for your API key the first time you open it:"
+  info ""
+  info "     ${GREEN_BOLD}API key: ${DASHBOARD_KEY}${PLAIN}"
+  info ""
+  info "   It is saved as apiKey in ${CONFIG_FILE}, in this folder."
   info "   If the page doesn't open from another computer, check that port ${PORT} is allowed through this server's firewall."
   info ""
   info "Note: CSV/LAS output and any OPC-UA certificate are kept in ./${DATA_DIR}, on this machine, so they survive the next update too."
