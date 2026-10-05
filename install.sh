@@ -17,8 +17,8 @@
 
 set -euo pipefail
 
-REGISTRY="ghcr.io"
-IMAGE="${REGISTRY}/witstreamconnect/witstream-connect"
+REGISTRY="${WITSTREAM_REGISTRY:-registry.witstreamconnect.com}"
+IMAGE="${REGISTRY}/witstream-connect"
 CONTAINER_NAME="witstream-connect"
 CONFIG_FILE="witstream-config.json"
 PORT="${WITSTREAM_PORT:-3000}"
@@ -27,13 +27,6 @@ LICENCE_SERVER_URL="${WITSTREAM_LICENCE_SERVER_URL:-https://licence.witstreamcon
 
 info()  { printf '%s\n' "$1"; }
 error() { printf 'Error: %s\n' "$1" >&2; }
-
-# Tiny, dependency-free JSON field reader for the Licence Server's own
-# small, fixed response shapes , deliberately not requiring jq, since a
-# customer's machine having it installed is not a safe assumption.
-json_field() {
-  printf '%s' "$1" | sed -n "s/.*\"$2\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p"
-}
 
 info "WITStream Connect® installer"
 info "----------------------------"
@@ -51,11 +44,12 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 # 2. The product image is private, kept that way deliberately to protect
-#    the real product logic, not left private by accident. The Licence
-#    Server itself brokers real pull access using
-#    the licence key as the credential, so nobody ever needs a separate
-#    GitHub account just to install this. Ask for the licence key once,
-#    up front, and reuse it below for the config file too.
+#    the product logic. WITStream Connect runs its own registry, which
+#    accepts the licence key itself as the sign-in: the Licence Server
+#    checks it and hands Docker a 15-minute download pass, so access ends
+#    the moment a licence is suspended or expires, and nobody needs a
+#    separate account. Ask for the licence key once, up front, and reuse
+#    it below for the config file too.
 if [ -f "$CONFIG_FILE" ]; then
   LICENCE_KEY=$(sed -n 's/.*"licenceKey"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$CONFIG_FILE" | head -1)
 fi
@@ -69,23 +63,15 @@ if [ -z "${LICENCE_KEY:-}" ]; then
   info "Licence key received (ending ${LICENCE_KEY: -4})."
 fi
 
-info "Requesting registry access..."
-IMAGE_ACCESS_RESPONSE=$(curl -sS -X POST "${LICENCE_SERVER_URL}/image-access" \
-  -H "Content-Type: application/json" \
-  -d "{\"licenceKey\":\"${LICENCE_KEY}\"}") || {
-  error "Could not reach the Licence Server at ${LICENCE_SERVER_URL}. Check your connection and try again."
-  exit 1
-}
-
-REGISTRY_USER=$(json_field "$IMAGE_ACCESS_RESPONSE" "username")
-REGISTRY_TOKEN=$(json_field "$IMAGE_ACCESS_RESPONSE" "token")
-
-if [ -z "$REGISTRY_TOKEN" ]; then
-  error "That licence key wasn't accepted. Check it's correct, active, and not expired."
+info "Signing in to the WITStream Connect® registry..."
+if ! printf '%s' "$LICENCE_KEY" | docker login "$REGISTRY" -u licence --password-stdin >/dev/null 2>&1; then
+  if ! curl -sS -o /dev/null "${LICENCE_SERVER_URL}/registry/token" 2>/dev/null; then
+    error "Could not reach the Licence Server at ${LICENCE_SERVER_URL}. Check your connection and try again."
+  else
+    error "That licence key wasn't accepted. Check it's correct, active, and not expired."
+  fi
   exit 1
 fi
-
-echo "$REGISTRY_TOKEN" | docker login "$REGISTRY" -u "$REGISTRY_USER" --password-stdin
 
 info "Pulling ${IMAGE}:${VERSION}..."
 docker pull "${IMAGE}:${VERSION}"
