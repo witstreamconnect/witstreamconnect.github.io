@@ -260,8 +260,8 @@
       </div>
       <div class="row"><div class="cell label">Reconfiguring for a new rig or contractor</div><div class="cell us">A settings screen, no code</div><div class="cell them">Usually a services engagement</div></div>
       <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Where your data lives</div><div class="cell us">Your own infrastructure, self-hosted</div><div class="cell them">Usually the vendor's cloud</div></div>
-      <div class="row"><div class="cell label">Operating system</div><div class="cell us">Linux, Windows, or macOS, one container, wherever Docker runs</div><div class="cell them">Often locked to one platform or the vendor's own infrastructure</div></div>
-      <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Getting started</div><div class="cell us">A container, one config file</div><div class="cell them">Usually a sales cycle and an integration project</div></div>
+      <div class="row"><div class="cell label">Operating system</div><div class="cell us">Windows Server as a native service, or Linux and macOS with Docker</div><div class="cell them">Often locked to one platform or the vendor's own infrastructure</div></div>
+      <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Getting started</div><div class="cell us">One command, then a settings screen</div><div class="cell them">Usually a sales cycle and an integration project</div></div>
       <div class="row"><div class="cell label">Implementation cost</div><div class="cell us">None, no professional services, no onboarding fee</div><div class="cell them">Often a paid integration project</div></div>
       <div class="row" style="background: rgba(255,255,255,0.015);"><div class="cell label">Format symmetry</div><div class="cell us">Any format in, any format out, genuinely, both directions</div><div class="cell them">Often one-way conversion</div></div>
       <div class="row"><div class="cell label">Mnemonic mapping across vendors</div><div class="cell us">Solved once, centrally, across every protocol</div><div class="cell them">Handled per integration</div></div>
@@ -653,14 +653,17 @@
       <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px;">
         <div style="display: flex; gap: 24px; align-items: baseline;">
           <div style="font-family: var(--mono); font-size: 13px; color: var(--teal);">01</div>
-          <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Get a licence and deploy the container</div>
+          <div style="font-family: var(--display); font-size: 20px; font-weight: 600;">Get a licence and install it</div>
         </div>
         <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-left: 40px;">
-          Sign up through the customer portal, pick a tier, and your licence key appears on your account page straight away. You need a Linux server with Docker (at least 2 processors and 4 GB of memory), on-premise or in your own cloud account; nothing is hosted for you. Then run this one line on it:
+          Sign up through the customer portal, pick a tier, and your licence key appears on your account page straight away. You need a server with at least 2 processors and 4 GB of memory, on-premise or in your own cloud account; nothing is hosted for you. Then run one line on it.
         </div>
+        <div style="font-size: 13px; color: var(--text-muted); padding-left: 40px; margin-top: 10px;">Windows Server (or Windows 10/11), no Docker needed, in PowerShell opened with Run as administrator:</div>
+        <div style="margin-left: 40px; margin-top: 6px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: var(--mono); font-size: 12.5px; overflow-x: auto;">irm https://witstreamconnect.com/install.ps1 | iex</div>
+        <div style="font-size: 13px; color: var(--text-muted); padding-left: 40px; margin-top: 10px;">Linux, with Docker, in a terminal:</div>
         <div style="margin-left: 40px; margin-top: 6px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: var(--mono); font-size: 12.5px; overflow-x: auto;">curl -fsSL https://witstreamconnect.com/install.sh | bash</div>
         <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7; padding-left: 40px; margin-top: 8px;">
-          The installer asks for your licence key once, creates a dashboard API key and shows it to you (keep it; the dashboard asks for it the first time), then ends with numbered steps, including the address to open in a browser on any computer that can reach the server. Running the same line again later updates to the newest version and keeps your settings.
+          The installer asks for your licence key once, creates a dashboard API key and shows it to you (keep it; the dashboard asks for it the first time), then ends with numbered steps, including the address to open in a browser on any computer that can reach the server. On Windows it installs WITStream Connect® as a service that starts with the server and opens Windows Firewall for it. Running the same line again later updates to the newest version and keeps your settings.
         </div>
       </div>
 
