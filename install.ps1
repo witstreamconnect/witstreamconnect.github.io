@@ -103,15 +103,33 @@ if ($PackagePath) {
 }
 
 # 4. Stop the running service (an update), then put the new program in place.
-if ($existing -and $existing.Status -ne "Stopped") {
-    Info "Stopping the running service..."
-    Stop-Service -Name $ServiceName -Force
-    (Get-Service $ServiceName).WaitForStatus("Stopped", (New-TimeSpan -Seconds 60))
-}
+#    "Apply now" ends the program and Windows starts it again 5 seconds
+#    later, so a service that looks stopped can start again while the new
+#    program is copied in, and the copy fails because the file is in use
+#    (found 7 October 2026 by the release test, which updates straight
+#    after Apply now). Each attempt stops the service, waits until no copy
+#    of the program is running, then copies; it tries again for a minute.
 New-Item -ItemType Directory -Force -Path $ProgramDir | Out-Null
-# Copied, not moved: a moved file keeps the permissions of the folder it was
-# downloaded to (this account's own Temp), which Local Service cannot read.
-Copy-Item -Force $download $ProgramExe
+$copied = $false
+for ($attempt = 1; $attempt -le 12 -and -not $copied; $attempt++) {
+    $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+    if ($svc -and $svc.Status -ne "Stopped") {
+        if ($attempt -eq 1) { Info "Stopping the running service..." }
+        Stop-Service -Name $ServiceName -Force -ErrorAction SilentlyContinue
+        try { $svc.WaitForStatus("Stopped", (New-TimeSpan -Seconds 60)) } catch { }
+    }
+    $deadline = (Get-Date).AddSeconds(20)
+    while ((Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $ProgramExe }) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 500 }
+    try {
+        # Copied, not moved: a moved file keeps the permissions of the folder it
+        # was downloaded to (this account's own Temp), which Local Service cannot read.
+        Copy-Item -Force $download $ProgramExe -ErrorAction Stop
+        $copied = $true
+    } catch {
+        Start-Sleep -Seconds 5
+    }
+}
+if (-not $copied) { Fail "The program could not be replaced because it is still running. Restart the server, then run the command again." }
 Remove-Item -Force $download
 Unblock-File $ProgramExe
 
@@ -146,14 +164,21 @@ if (-not $existing) {
 & sc.exe config $ServiceName obj= "NT AUTHORITY\LocalService" | Out-Null
 if ($LASTEXITCODE -ne 0) { Fail "Could not set the service to run as Local Service (sc.exe exit code $LASTEXITCODE)." }
 & sc.exe failure $ServiceName reset= 86400 actions= restart/5000/restart/5000/restart/5000 | Out-Null
-$environment = @("DOTNET_BUNDLE_EXTRACT_BASE_DIR=$DataDir\runtime")
+# The program runs from its single file; versions before v0.2.54 unpacked
+# themselves into a runtime folder here, no longer needed.
+$environment = @()
+if (Test-Path "$DataDir\runtime") { Remove-Item -Recurse -Force "$DataDir\runtime" -ErrorAction SilentlyContinue }
 if ($Port) { $environment += "WITSTREAM_PORT=$Port" }
 else {
     $previous = (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\$ServiceName" -Name Environment -ErrorAction SilentlyContinue).Environment | Where-Object { $_ -like "WITSTREAM_PORT=*" }
     if ($previous) { $environment += $previous; $Port = [int]($previous -replace "WITSTREAM_PORT=", "") }
 }
 if (-not $Port) { $Port = 3000 }
-Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\$ServiceName" -Name Environment -Type MultiString -Value $environment
+if ($environment.Count -gt 0) {
+    Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\$ServiceName" -Name Environment -Type MultiString -Value $environment
+} else {
+    Remove-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\$ServiceName" -Name Environment -ErrorAction SilentlyContinue
+}
 
 # 7. Windows Firewall: let other computers reach the dashboard and every
 #    output port set on the configuration screen.
